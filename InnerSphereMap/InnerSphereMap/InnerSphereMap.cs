@@ -1,4 +1,4 @@
-﻿using Harmony;
+﻿using HarmonyLib;
 using System.Reflection;
 
 namespace InnerSphereMap
@@ -12,7 +12,7 @@ namespace InnerSphereMap
         public static void Init(string directory, string settingsJSON) {
             ModDirectory = directory;
             SETTINGS = Helper.LoadSettings();
-            var harmony = HarmonyInstance.Create("de.morphyum.InnerSphereMap");
+            var harmony = new Harmony("de.morphyum.InnerSphereMap");
             harmony.PatchAll(Assembly.GetExecutingAssembly());
         }
     }
