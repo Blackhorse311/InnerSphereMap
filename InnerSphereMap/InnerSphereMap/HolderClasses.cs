@@ -21,7 +21,13 @@ namespace InnerSphereMap {
         public string splashText = "";
 
         public List<LogoItem> logos = new List<LogoItem>();
-        public bool reducedClanLogos = true;    
+        public bool reducedClanLogos = true;
+
+        // AIEmpires fork: always-visible system labels. Radius is in def-space
+        // light-years (raw Position units), 0 disables proximity labels.
+        public float ProximityLabelRadiusLy = 100f;
+        public bool ShowLabelDifficulty = true;
+        public List<string> alwaysLabeledSystems = new List<string>();
 
     }
 
