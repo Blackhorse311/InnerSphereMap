@@ -239,7 +239,8 @@ namespace InnerSphereMap {
             textMesh.fontSize = 140;
             textMesh.characterSize = settings.FactionNameSize;
             textMesh.text = faction.FriendlyName;
-            textMesh.color = new Color(0.82f, 0.82f, 0.76f, settings.FactionNameOpacity);
+            float b = settings.FactionNameBrightness;
+            textMesh.color = new Color(0.82f * b, 0.82f * b, 0.76f * b, settings.FactionNameOpacity);
         }
 
         static void Postfix(StarmapRenderer __instance) {
