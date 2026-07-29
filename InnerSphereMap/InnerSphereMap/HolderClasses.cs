@@ -44,6 +44,13 @@ namespace InnerSphereMap {
         public float LogoScaleAdd = 4f;
         public float LogoOpacity = 1f;
         public bool logoTintByFaction;
+
+        // AIEmpires fork: scale crests to their faction's territory extent so
+        // 17 Kerensky-cluster clans don't wear house-sized crests. Factor 0
+        // keeps the legacy fixed LogoScaleAdd.
+        public float LogoExtentFactor = 0f;
+        public float LogoMinScaleAdd = 1f;
+        public float LogoMaxScaleAdd = 4f;
         public float TerritoryHaloSize = 0f;  // world units, 0 disables halos
         public float TerritoryHaloOpacity = 0.18f;
 

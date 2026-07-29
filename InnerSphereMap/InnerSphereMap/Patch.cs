@@ -232,6 +232,7 @@ namespace InnerSphereMap {
                 byte[] data;
 
                 int logosPlaced = 0;
+                var untintable = new List<string>();
                 foreach (LogoItem logoItem in InnerSphereMap.SETTINGS.logos)
                 {
                     FactionValue factionValue = FactionEnumeration.GetFactionByName(logoItem.factionName);
@@ -258,19 +259,37 @@ namespace InnerSphereMap {
                         go.SetActive(true);
                     }
                     Material logoMaterial = go.GetComponent<Renderer>().material;
+                    Color tint = Color.white;
+                    if (InnerSphereMap.SETTINGS.logoTintByFaction)
+                    {
+                        Color mapColor = factionValue.GetMapColor();
+                        if (mapColor != Color.black)
+                        {
+                            tint = mapColor;
+                        }
+                        else
+                        {
+                            untintable.Add(logoItem.factionName + ":noMapColor");
+                        }
+                    }
+                    tint.a = InnerSphereMap.SETTINGS.LogoOpacity;
                     if (logoMaterial.HasProperty("_Color"))
                     {
-                        Color tint = Color.white;
-                        if (InnerSphereMap.SETTINGS.logoTintByFaction)
-                        {
-                            Color mapColor = factionValue.GetMapColor();
-                            if (mapColor != Color.black)
-                            {
-                                tint = mapColor;
-                            }
-                        }
-                        tint.a = InnerSphereMap.SETTINGS.LogoOpacity;
                         logoMaterial.color = tint;
+                    }
+                    else
+                    {
+                        // The vanilla logo shader exposes no tint property —
+                        // swap to a sprite shader that honors color + alpha,
+                        // keeping the crest texture.
+                        untintable.Add(logoItem.factionName + ":shader=" + logoMaterial.shader.name);
+                        Shader sprites = Shader.Find("Sprites/Default");
+                        if (sprites != null)
+                        {
+                            Texture crestTex = logoMaterial.mainTexture;
+                            Material replacement = new Material(sprites) { mainTexture = crestTex, color = tint };
+                            go.GetComponent<Renderer>().material = replacement;
+                        }
                     }
                     ReflectionHelper.InvokePrivateMethode(__instance, "PlaceLogo", new object[] { FactionEnumeration.GetFactionByName(logoItem.factionName), go });
                     if (go.activeSelf)
@@ -278,7 +297,8 @@ namespace InnerSphereMap {
                         logosPlaced++;
                     }
                 }
-                Logger.LogLine($"Logos: {logosPlaced}/{InnerSphereMap.SETTINGS.logos.Count} active after placement");
+                Logger.LogLine($"Logos: {logosPlaced}/{InnerSphereMap.SETTINGS.logos.Count} active after placement"
+                    + (untintable.Count > 0 ? " | tint fallbacks: " + string.Join(", ", untintable.ToArray()) : ""));
 
                 if (InnerSphereMap.SETTINGS.reducedClanLogos)
                 {
@@ -472,14 +492,47 @@ namespace InnerSphereMap {
 
             static void Postfix(StarmapRenderer __instance, FactionValue faction, GameObject logo) {
                 try {
-                    if (logo.transform.localScale == Fields.originalTransform.localScale) {
-                        float add = InnerSphereMap.SETTINGS.LogoScaleAdd;
+                    Settings settings = InnerSphereMap.SETTINGS;
+                    float add = settings.LogoScaleAdd;
+                    if (settings.LogoExtentFactor > 0f) {
+                        float extent = FactionExtent(__instance, faction);
+                        if (extent > 0f) {
+                            add = Mathf.Clamp(extent * settings.LogoExtentFactor, settings.LogoMinScaleAdd, settings.LogoMaxScaleAdd);
+                        }
+                    }
+                    if (logo.transform.localScale == Fields.originalTransform.localScale
+                        || settings.LogoExtentFactor > 0f) {
                         logo.transform.localScale = Fields.originalTransform.localScale + new Vector3(add, add, add);
                     }
                 }
                 catch (Exception e) {
                     Logger.LogError(e);
                 }
+            }
+
+            // Bounding half-extent of the faction's territory in world units,
+            // so a crest can be sized to the space it actually owns.
+            private static float FactionExtent(StarmapRenderer renderer, FactionValue faction) {
+                float minX = float.MaxValue, maxX = float.MinValue;
+                float minY = float.MaxValue, maxY = float.MinValue;
+                int owned = 0;
+                foreach (StarSystemNode node in renderer.starmap.VisisbleSystem) {
+                    if (!node.System.OwnerValue.Equals(faction)) {
+                        continue;
+                    }
+                    owned++;
+                    Vector2 n = node.NormalizedPosition;
+                    float x = (n.x * 2f - 1f) * InnerSphereMap.SETTINGS.MapWidth;
+                    float y = (n.y * 2f - 1f) * InnerSphereMap.SETTINGS.MapHeight;
+                    if (x < minX) minX = x;
+                    if (x > maxX) maxX = x;
+                    if (y < minY) minY = y;
+                    if (y > maxY) maxY = y;
+                }
+                if (owned == 0) {
+                    return 0f;
+                }
+                return Mathf.Max(maxX - minX, maxY - minY) * 0.5f;
             }
         }
 
