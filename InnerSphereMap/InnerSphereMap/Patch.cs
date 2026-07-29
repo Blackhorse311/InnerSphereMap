@@ -504,12 +504,16 @@ namespace InnerSphereMap {
                             add = Mathf.Clamp(extent * settings.LogoExtentFactor, settings.LogoMinScaleAdd, settings.LogoMaxScaleAdd);
                         }
                     }
-                    if (faction.IsClan) {
-                        add *= settings.ClanLogoScaleMult;
-                    }
                     if (logo.transform.localScale == Fields.originalTransform.localScale
                         || settings.LogoExtentFactor > 0f) {
-                        logo.transform.localScale = Fields.originalTransform.localScale + new Vector3(add, add, add);
+                        Vector3 newScale = Fields.originalTransform.localScale + new Vector3(add, add, add);
+                        if (faction.IsClan) {
+                            // Multiply the WHOLE scale: the template's base
+                            // scale dominates the add, so halving only the add
+                            // is visually imperceptible.
+                            newScale *= settings.ClanLogoScaleMult;
+                        }
+                        logo.transform.localScale = newScale;
                     }
                 }
                 catch (Exception e) {
