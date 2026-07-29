@@ -48,6 +48,18 @@ namespace InnerSphereMap {
         public float BorderOpacity = 0f;
         public int BorderGridResolution = 160;
 
+        // AIEmpires fork: vanilla StarmapBorders political-map support (ported
+        // from BTA's fork, repaired). drawBorders re-enables the GPU territory
+        // renderer; rescaleBorders stretches its canvas to MapWidth/Height.
+        // BTA swapped plusTex to solid black which multiplies the territory
+        // fill to nothing — white keeps the poster-style fill. TravelWash 0
+        // kills the all-white travel-zone overlay that greys the whole map
+        // when every system is reachable; negative leaves vanilla behavior.
+        public bool drawBorders;
+        public bool rescaleBorders;
+        public bool borderFillWhite = true;
+        public float TravelWashIntensity = -1f;
+
     }
 
     public class LogoItem

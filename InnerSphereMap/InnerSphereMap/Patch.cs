@@ -150,13 +150,41 @@ namespace InnerSphereMap {
     [HarmonyPatch(typeof(StarmapBorders), "OnWillRenderObject")]
     public static class StarmapBorders_OnWillRenderObject {
 
-        static bool Prefix(StarmapBorders __instance) {
-            // Disables the dashed-line border
-            GameObject.Find("Edges").SetActive(false);
+        private static Texture2D _fillTex;
 
-            // Disables the gray box, and other borders -- also fully disables StarmapBorders itself (since its a MonoBehavior attached to RegionBorders)
-            GameObject.Find("RegionBorders").SetActive(false);
-            return false;
+        static bool Prefix(StarmapBorders __instance) {
+            try {
+                Settings settings = InnerSphereMap.SETTINGS;
+                GameObject.Find("Edges")?.SetActive(false);
+                if (!settings.drawBorders) {
+                    // Vanilla region borders are Aurigan-sized; without the
+                    // rescale they are just a gray box on the big map.
+                    GameObject.Find("RegionBorders")?.SetActive(false);
+                    return false;
+                }
+                if (settings.rescaleBorders) {
+                    __instance.gameObject.transform.localScale = new Vector3(4f * settings.MapHeight, 4f * settings.MapWidth);
+                    if (_fillTex == null) {
+                        _fillTex = new Texture2D(64, 64, TextureFormat.ARGB32, false);
+                        Color fill = settings.borderFillWhite ? Color.white : Color.black;
+                        for (int y = 0; y < 64; y++) {
+                            for (int x = 0; x < 64; x++) {
+                                _fillTex.SetPixel(x, y, fill);
+                            }
+                        }
+                        _fillTex.Apply();
+                    }
+                    __instance.plusTex = _fillTex;
+                }
+                if (settings.TravelWashIntensity >= 0f) {
+                    __instance.travelIntensity = settings.TravelWashIntensity;
+                }
+                return true;
+            }
+            catch (Exception e) {
+                Logger.LogError(e);
+                return true;
+            }
         }
     }
 
