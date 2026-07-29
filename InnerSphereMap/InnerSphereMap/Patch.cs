@@ -225,7 +225,6 @@ namespace InnerSphereMap {
                 label.GetComponent<MeshRenderer>().material = SystemLabels.LabelFont.material;
                 textMesh.anchor = TextAnchor.UpperCenter;
                 textMesh.alignment = TextAlignment.Center;
-                textMesh.fontSize = 48;
                 textMesh.fontStyle = FontStyle.Bold;
             }
             else {
@@ -234,9 +233,13 @@ namespace InnerSphereMap {
                     return;
                 }
             }
+            // High fontSize + small characterSize keeps the same world size
+            // while rasterizing the glyphs densely enough to stay crisp when
+            // the camera zooms in.
+            textMesh.fontSize = 140;
             textMesh.characterSize = settings.FactionNameSize;
             textMesh.text = faction.FriendlyName;
-            textMesh.color = new Color(1f, 1f, 1f, settings.FactionNameOpacity);
+            textMesh.color = new Color(0.82f, 0.82f, 0.76f, settings.FactionNameOpacity);
         }
 
         static void Postfix(StarmapRenderer __instance) {
