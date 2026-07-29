@@ -30,6 +30,9 @@ namespace InnerSphereMap {
         public float ViewLabelRadius = 0f;
         public bool ShowLabelDifficulty = true;
         public List<string> alwaysLabeledSystems = new List<string>();
+        // Label every system within N jumps of the player's current system
+        // (BFS over the node graph, not a radius). 0 disables.
+        public int JumpLabelDepth = 0;
 
         // AIEmpires fork: camera distance from the map plane. Vanilla parks the
         // camera at z=-100; larger MapWidth/Height needs a proportionally

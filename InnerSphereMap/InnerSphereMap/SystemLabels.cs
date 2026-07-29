@@ -35,6 +35,9 @@ namespace InnerSphereMap {
             }
             float radiusSq = settings.ViewLabelRadius * settings.ViewLabelRadius;
             var alwaysOn = new HashSet<string>(settings.alwaysLabeledSystems);
+            HashSet<string> jumpSet = settings.JumpLabelDepth > 0
+                ? SystemsWithinJumps(renderer.starmap, sim, settings.JumpLabelDepth)
+                : null;
 
             var systemDictionary = (Dictionary<GameObject, StarmapSystemRenderer>)ReflectionHelper.GetPrivateField(renderer, "systemDictionary");
             foreach (StarmapSystemRenderer systemRenderer in systemDictionary.Values) {
@@ -43,8 +46,8 @@ namespace InnerSphereMap {
                     continue;
                 }
                 bool isCapital = alwaysOn.Contains(system.Name);
-                bool isNear = false;
-                if (settings.ViewLabelRadius > 0f && !isCapital) {
+                bool isNear = jumpSet != null && jumpSet.Contains(system.ID);
+                if (!isNear && !isCapital && settings.ViewLabelRadius > 0f) {
                     Vector3 pos = systemRenderer.transform.position;
                     float dx = pos.x - viewCenter.x;
                     float dy = pos.y - viewCenter.y;
@@ -52,6 +55,28 @@ namespace InnerSphereMap {
                 }
                 SetLabel(systemRenderer, system, sim, isNear || isCapital, isCapital, settings);
             }
+        }
+
+        private static HashSet<string> SystemsWithinJumps(Starmap starmap, SimGameState sim, int depth) {
+            var reached = new HashSet<string>();
+            StarSystemNode start = starmap.GetSystemByID(sim.CurSystem.ID);
+            if (start == null) {
+                return reached;
+            }
+            var frontier = new List<StarSystemNode> { start };
+            reached.Add(start.System.ID);
+            for (int hop = 0; hop < depth; hop++) {
+                var next = new List<StarSystemNode>();
+                foreach (StarSystemNode node in frontier) {
+                    foreach (StarSystemNode adjacent in node.AdjacentSystems) {
+                        if (reached.Add(adjacent.System.ID)) {
+                            next.Add(adjacent);
+                        }
+                    }
+                }
+                frontier = next;
+            }
+            return reached;
         }
 
         private static void SetLabel(StarmapSystemRenderer renderer, StarSystem system, SimGameState sim, bool show, bool isCapital, Settings settings) {
@@ -79,7 +104,8 @@ namespace InnerSphereMap {
                 textMesh.anchor = TextAnchor.UpperCenter;
                 textMesh.alignment = TextAlignment.Center;
                 textMesh.characterSize = settings.LabelCharacterSize;
-                textMesh.fontSize = 32;
+                // Dense rasterization keeps glyphs crisp under deep zoom.
+                textMesh.fontSize = 140;
             }
             else {
                 labelObject = existing.gameObject;
@@ -128,7 +154,7 @@ namespace InnerSphereMap {
         static void Postfix(StarmapRenderer __instance) {
             try {
                 Settings settings = InnerSphereMap.SETTINGS;
-                if (settings.ViewLabelRadius <= 0f && settings.alwaysLabeledSystems.Count == 0) {
+                if (settings.ViewLabelRadius <= 0f && settings.JumpLabelDepth <= 0 && settings.alwaysLabeledSystems.Count == 0) {
                     return;
                 }
                 Camera camera = __instance.starmapCamera;
