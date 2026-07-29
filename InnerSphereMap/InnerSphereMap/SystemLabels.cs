@@ -89,7 +89,7 @@ namespace InnerSphereMap {
                 labelObject.GetComponent<MeshRenderer>().material = LabelFont.material;
                 textMesh.anchor = TextAnchor.UpperCenter;
                 textMesh.alignment = TextAlignment.Center;
-                textMesh.characterSize = 0.28f;
+                textMesh.characterSize = settings.LabelCharacterSize;
                 textMesh.fontSize = 32;
             }
             else {

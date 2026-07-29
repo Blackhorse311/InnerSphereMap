@@ -34,6 +34,13 @@ namespace InnerSphereMap {
         // farther camera or max zoom-out can no longer frame the whole sphere.
         public float CameraDistance = 100f;
 
+        // AIEmpires fork: visual tuning that must scale with MapWidth/Height.
+        public float LabelCharacterSize = 0.28f;
+        public float LogoScale = 5f;      // 5 replicates the legacy original+4 sizing
+        public float LogoOpacity = 1f;
+        public float TerritoryHaloSize = 0f;  // world units, 0 disables halos
+        public float TerritoryHaloOpacity = 0.18f;
+
     }
 
     public class LogoItem
