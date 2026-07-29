@@ -260,7 +260,17 @@ namespace InnerSphereMap {
                     Material logoMaterial = go.GetComponent<Renderer>().material;
                     if (logoMaterial.HasProperty("_Color"))
                     {
-                        logoMaterial.color = new Color(1f, 1f, 1f, InnerSphereMap.SETTINGS.LogoOpacity);
+                        Color tint = Color.white;
+                        if (InnerSphereMap.SETTINGS.logoTintByFaction)
+                        {
+                            Color mapColor = factionValue.GetMapColor();
+                            if (mapColor != Color.black)
+                            {
+                                tint = mapColor;
+                            }
+                        }
+                        tint.a = InnerSphereMap.SETTINGS.LogoOpacity;
+                        logoMaterial.color = tint;
                     }
                     ReflectionHelper.InvokePrivateMethode(__instance, "PlaceLogo", new object[] { FactionEnumeration.GetFactionByName(logoItem.factionName), go });
                     if (go.activeSelf)
@@ -463,7 +473,8 @@ namespace InnerSphereMap {
             static void Postfix(StarmapRenderer __instance, FactionValue faction, GameObject logo) {
                 try {
                     if (logo.transform.localScale == Fields.originalTransform.localScale) {
-                        logo.transform.localScale = Fields.originalTransform.localScale * InnerSphereMap.SETTINGS.LogoScale;
+                        float add = InnerSphereMap.SETTINGS.LogoScaleAdd;
+                        logo.transform.localScale = Fields.originalTransform.localScale + new Vector3(add, add, add);
                     }
                 }
                 catch (Exception e) {

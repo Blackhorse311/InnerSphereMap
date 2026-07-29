@@ -38,8 +38,12 @@ namespace InnerSphereMap {
 
         // AIEmpires fork: visual tuning that must scale with MapWidth/Height.
         public float LabelCharacterSize = 0.28f;
-        public float LogoScale = 5f;      // 5 replicates the legacy original+4 sizing
+        // Added to the template's base scale (legacy behavior was original+4;
+        // multiplying instead explodes crest size when the template's base
+        // scale is not 1).
+        public float LogoScaleAdd = 4f;
         public float LogoOpacity = 1f;
+        public bool logoTintByFaction;
         public float TerritoryHaloSize = 0f;  // world units, 0 disables halos
         public float TerritoryHaloOpacity = 0.18f;
 
