@@ -126,11 +126,36 @@ namespace InnerSphereMap {
             string text = system.Name;
             if (settings.ShowLabelDifficulty) {
                 int difficulty = system.Def.GetDifficulty(sim.SimGameMode);
-                text += "  [" + difficulty + "]";
+                text += "\n" + DifficultyRow(difficulty);
             }
             textMesh.text = text;
-            textMesh.color = isCapital ? CapitalColor : NearbyColor;
+            float b = settings.LabelBrightness;
+            Color baseColor = isCapital ? CapitalColor : NearbyColor;
+            textMesh.color = new Color(baseColor.r * b, baseColor.g * b, baseColor.b * b, settings.LabelOpacity);
             labelObject.SetActive(true);
+        }
+
+        private static bool? _skullGlyphAvailable;
+
+        // BT reads difficulty in half-skull steps; render real skulls when
+        // the bundled font has the glyph, otherwise fall back to [n].
+        private static string DifficultyRow(int difficulty) {
+            if (_skullGlyphAvailable == null) {
+                _skullGlyphAvailable = LabelFont.HasCharacter('☠');
+            }
+            if (_skullGlyphAvailable != true) {
+                return "[" + difficulty + "]";
+            }
+            int full = difficulty / 2;
+            bool half = difficulty % 2 == 1;
+            var row = new System.Text.StringBuilder();
+            for (int i = 0; i < full; i++) {
+                row.Append('☠');
+            }
+            if (half) {
+                row.Append('½');
+            }
+            return row.Length > 0 ? row.ToString() : "½";
         }
     }
 

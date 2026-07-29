@@ -33,6 +33,8 @@ namespace InnerSphereMap {
         // Label every system within N jumps of the player's current system
         // (BFS over the node graph, not a radius). 0 disables.
         public int JumpLabelDepth = 0;
+        public float LabelOpacity = 0.85f;
+        public float LabelBrightness = 1f;
 
         // AIEmpires fork: camera distance from the map plane. Vanilla parks the
         // camera at z=-100; larger MapWidth/Height needs a proportionally
