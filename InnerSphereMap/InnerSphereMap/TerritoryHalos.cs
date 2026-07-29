@@ -15,14 +15,40 @@ namespace InnerSphereMap {
 
         private const string HaloName = "AIEmpiresTerritoryHalo";
         private static Material _haloMaterial;
+        private static Texture2D _haloTexture;
         private static bool _shaderMissingLogged;
+
+        // Radial gradient with alpha falling to zero at the edge — gives a
+        // soft round glow instead of a hard opaque square, independent of
+        // whether the shader honors _Color alpha.
+        private static Texture2D HaloTexture {
+            get {
+                if (_haloTexture == null) {
+                    const int size = 64;
+                    _haloTexture = new Texture2D(size, size, TextureFormat.ARGB32, false);
+                    float half = (size - 1) / 2f;
+                    for (int y = 0; y < size; y++) {
+                        for (int x = 0; x < size; x++) {
+                            float dx = (x - half) / half;
+                            float dy = (y - half) / half;
+                            float distance = Mathf.Sqrt(dx * dx + dy * dy);
+                            float alpha = Mathf.Clamp01(1f - distance);
+                            alpha *= alpha;
+                            _haloTexture.SetPixel(x, y, new Color(1f, 1f, 1f, alpha));
+                        }
+                    }
+                    _haloTexture.Apply();
+                }
+                return _haloTexture;
+            }
+        }
 
         private static Material HaloMaterial {
             get {
                 if (_haloMaterial == null) {
                     Shader shader = Shader.Find("Sprites/Default");
                     if (shader != null) {
-                        _haloMaterial = new Material(shader);
+                        _haloMaterial = new Material(shader) { mainTexture = HaloTexture };
                     }
                 }
                 return _haloMaterial;

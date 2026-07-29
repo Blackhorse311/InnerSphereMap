@@ -23,9 +23,11 @@ namespace InnerSphereMap {
         public List<LogoItem> logos = new List<LogoItem>();
         public bool reducedClanLogos = true;
 
-        // AIEmpires fork: always-visible system labels. Radius is in def-space
-        // light-years (raw Position units), 0 disables proximity labels.
-        public float ProximityLabelRadiusLy = 100f;
+        // AIEmpires fork: system labels follow the camera — systems within
+        // ViewLabelRadius (world units) of the view center get name labels,
+        // re-evaluated as the player pans. 0 disables. Capitals in
+        // alwaysLabeledSystems are always labeled.
+        public float ViewLabelRadius = 0f;
         public bool ShowLabelDifficulty = true;
         public List<string> alwaysLabeledSystems = new List<string>();
 
@@ -40,6 +42,11 @@ namespace InnerSphereMap {
         public float LogoOpacity = 1f;
         public float TerritoryHaloSize = 0f;  // world units, 0 disables halos
         public float TerritoryHaloOpacity = 0.18f;
+
+        // AIEmpires fork: faction border lines from a coarse ownership grid.
+        // BorderOpacity 0 disables; resolution is cells across the map.
+        public float BorderOpacity = 0f;
+        public int BorderGridResolution = 160;
 
     }
 

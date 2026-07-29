@@ -92,6 +92,7 @@
     <Compile Include="ReflectionHelper.cs" />
     <Compile Include="SystemLabels.cs" />
     <Compile Include="TerritoryHalos.cs" />
+    <Compile Include="Borders.cs" />
     <Compile Include="GameObjectExtensions.cs" />
     <Compile Include="TransformExtensions.cs" />
   </ItemGroup>
