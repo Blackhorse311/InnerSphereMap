@@ -51,6 +51,10 @@ namespace InnerSphereMap {
         public float LogoExtentFactor = 0f;
         public float LogoMinScaleAdd = 1f;
         public float LogoMaxScaleAdd = 4f;
+        // Factions whose territory bounding half-extent is below this hide
+        // their crest entirely (a dozen Kerensky-cluster clans stacking
+        // min-size crests is still an unreadable glob). 0 disables.
+        public float LogoMinExtentToShow = 0f;
         public float TerritoryHaloSize = 0f;  // world units, 0 disables halos
         public float TerritoryHaloOpacity = 0.18f;
 

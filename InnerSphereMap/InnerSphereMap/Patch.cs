@@ -494,9 +494,13 @@ namespace InnerSphereMap {
                 try {
                     Settings settings = InnerSphereMap.SETTINGS;
                     float add = settings.LogoScaleAdd;
-                    if (settings.LogoExtentFactor > 0f) {
+                    if (settings.LogoExtentFactor > 0f || settings.LogoMinExtentToShow > 0f) {
                         float extent = FactionExtent(__instance, faction);
-                        if (extent > 0f) {
+                        if (settings.LogoMinExtentToShow > 0f && extent < settings.LogoMinExtentToShow) {
+                            logo.SetActive(false);
+                            return;
+                        }
+                        if (settings.LogoExtentFactor > 0f && extent > 0f) {
                             add = Mathf.Clamp(extent * settings.LogoExtentFactor, settings.LogoMinScaleAdd, settings.LogoMaxScaleAdd);
                         }
                     }
