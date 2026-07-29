@@ -414,6 +414,13 @@ namespace InnerSphereMap {
                     needsPan = false;
                 }
                 clampedPosition.z = -InnerSphereMap.SETTINGS.CameraDistance;
+                // Unity's default far plane is 1000; a camera pulled farther
+                // back than that clips the entire map plane into blackness.
+                float requiredFar = InnerSphereMap.SETTINGS.CameraDistance + 2000f;
+                if (starMapCamera.farClipPlane < requiredFar) {
+                    starMapCamera.farClipPlane = requiredFar;
+                    fakeCamera.farClipPlane = requiredFar;
+                }
                 starMapCamera.transform.position = clampedPosition;
             }
             catch (Exception e) {
