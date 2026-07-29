@@ -29,6 +29,11 @@ namespace InnerSphereMap {
         public bool ShowLabelDifficulty = true;
         public List<string> alwaysLabeledSystems = new List<string>();
 
+        // AIEmpires fork: camera distance from the map plane. Vanilla parks the
+        // camera at z=-100; larger MapWidth/Height needs a proportionally
+        // farther camera or max zoom-out can no longer frame the whole sphere.
+        public float CameraDistance = 100f;
+
     }
 
     public class LogoItem

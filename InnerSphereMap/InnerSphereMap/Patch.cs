@@ -203,6 +203,7 @@ namespace InnerSphereMap {
                 Texture2D texture2D2;
                 byte[] data;
 
+                int logosPlaced = 0;
                 foreach (LogoItem logoItem in InnerSphereMap.SETTINGS.logos)
                 {
                     FactionValue factionValue = FactionEnumeration.GetFactionByName(logoItem.factionName);
@@ -219,14 +220,22 @@ namespace InnerSphereMap {
                         go = UnityEngine.Object.Instantiate(__instance.restorationLogo);
                         go.GetComponent<Renderer>().material.mainTexture = texture2D2;
                         go.name = mapGoObject;
+                        // The template logo is inactive on career maps and
+                        // Instantiate copies that state — clones stay invisible.
+                        go.SetActive(true);
                     }
                     else
                     {
                         go = GameObject.Find(mapGoObject);
-
+                        go.SetActive(true);
                     }
                     ReflectionHelper.InvokePrivateMethode(__instance, "PlaceLogo", new object[] { FactionEnumeration.GetFactionByName(logoItem.factionName), go });
+                    if (go.activeSelf)
+                    {
+                        logosPlaced++;
+                    }
                 }
+                Logger.LogLine($"Logos: {logosPlaced}/{InnerSphereMap.SETTINGS.logos.Count} active after placement");
 
                 if (InnerSphereMap.SETTINGS.reducedClanLogos)
                 {
@@ -399,6 +408,7 @@ namespace InnerSphereMap {
                 if (clampedPosition.x == leftBoundary || clampedPosition.x == rightBoundary || clampedPosition.y == topBoundary || clampedPosition.y == bottomBoundary) {
                     needsPan = false;
                 }
+                clampedPosition.z = -InnerSphereMap.SETTINGS.CameraDistance;
                 starMapCamera.transform.position = clampedPosition;
             }
             catch (Exception e) {
