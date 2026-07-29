@@ -18,7 +18,7 @@ namespace InnerSphereMap {
         private static Font _labelFont;
         internal static Vector3 LastLabelCenter = new Vector3(float.MaxValue, 0f, 0f);
 
-        private static Font LabelFont {
+        internal static Font LabelFont {
             get {
                 if (_labelFont == null) {
                     _labelFont = Resources.GetBuiltinResource<Font>("Arial.ttf");

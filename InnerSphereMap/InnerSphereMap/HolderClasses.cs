@@ -57,6 +57,10 @@ namespace InnerSphereMap {
         public float LogoMinExtentToShow = 0f;
         // Extra multiplier applied to clan crests after extent sizing.
         public float ClanLogoScaleMult = 1f;
+        // Faction name text under each placed crest (poster-map layer).
+        // Character size in crest-local units; 0 disables.
+        public float FactionNameSize = 0f;
+        public float FactionNameOpacity = 0.85f;
         public float TerritoryHaloSize = 0f;  // world units, 0 disables halos
         public float TerritoryHaloOpacity = 0.18f;
 

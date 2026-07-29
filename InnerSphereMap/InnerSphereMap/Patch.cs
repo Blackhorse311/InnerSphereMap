@@ -207,6 +207,38 @@ namespace InnerSphereMap {
             return false;
 
         }
+        private static void EnsureFactionName(GameObject crest, FactionValue faction) {
+            Settings settings = InnerSphereMap.SETTINGS;
+            if (settings.FactionNameSize <= 0f) {
+                return;
+            }
+            const string childName = "AIEmpiresFactionName";
+            Transform existing = crest.transform.Find(childName);
+            TextMesh textMesh;
+            if (existing == null) {
+                GameObject label = new GameObject(childName);
+                label.layer = crest.layer;
+                label.transform.SetParent(crest.transform, false);
+                label.transform.localPosition = new Vector3(0f, -0.62f, -0.05f);
+                textMesh = label.AddComponent<TextMesh>();
+                textMesh.font = SystemLabels.LabelFont;
+                label.GetComponent<MeshRenderer>().material = SystemLabels.LabelFont.material;
+                textMesh.anchor = TextAnchor.UpperCenter;
+                textMesh.alignment = TextAlignment.Center;
+                textMesh.fontSize = 48;
+                textMesh.fontStyle = FontStyle.Bold;
+            }
+            else {
+                textMesh = existing.GetComponent<TextMesh>();
+                if (textMesh == null) {
+                    return;
+                }
+            }
+            textMesh.characterSize = settings.FactionNameSize;
+            textMesh.text = faction.FriendlyName;
+            textMesh.color = new Color(1f, 1f, 1f, settings.FactionNameOpacity);
+        }
+
         static void Postfix(StarmapRenderer __instance) {
             try {
                 var davionLogo = GameObject.Find("davionLogo");
@@ -295,10 +327,11 @@ namespace InnerSphereMap {
                     if (go.activeSelf)
                     {
                         logosPlaced++;
+                        EnsureFactionName(go, factionValue);
                     }
                 }
                 Logger.LogLine($"Logos: {logosPlaced}/{InnerSphereMap.SETTINGS.logos.Count} active after placement"
-                    + (untintable.Count > 0 ? " | tint fallbacks: " + string.Join(", ", untintable.ToArray()) : ""));
+                    + (untintable.Count > 0 ? " | tint fallbacks: " + untintable.Count : ""));
 
                 if (InnerSphereMap.SETTINGS.reducedClanLogos)
                 {
