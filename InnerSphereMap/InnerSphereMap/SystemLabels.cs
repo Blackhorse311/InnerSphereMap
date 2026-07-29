@@ -78,6 +78,10 @@ namespace InnerSphereMap {
             GameObject labelObject;
             if (existing == null) {
                 labelObject = new GameObject(LabelName);
+                // Must live on the starmap render layer: the starmap camera culls
+                // Default-layer objects (labels invisible on the map) while other
+                // scene cameras (mech bay) happily render them mid-hangar.
+                labelObject.layer = renderer.gameObject.layer;
                 labelObject.transform.SetParent(renderer.transform, false);
                 labelObject.transform.localPosition = new Vector3(0f, -1.4f, -0.2f);
                 textMesh = labelObject.AddComponent<TextMesh>();
@@ -94,6 +98,14 @@ namespace InnerSphereMap {
                 if (textMesh == null) {
                     return;
                 }
+            }
+
+            // Renderers scale up when selected/visited; counter it so labels
+            // keep a constant world size.
+            float parentScale = renderer.transform.lossyScale.x;
+            if (parentScale > 0.001f) {
+                float inverse = 1f / parentScale;
+                labelObject.transform.localScale = new Vector3(inverse, inverse, inverse);
             }
 
             string text = system.Name;
