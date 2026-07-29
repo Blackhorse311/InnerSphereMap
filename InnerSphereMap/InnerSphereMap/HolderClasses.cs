@@ -55,6 +55,8 @@ namespace InnerSphereMap {
         // their crest entirely (a dozen Kerensky-cluster clans stacking
         // min-size crests is still an unreadable glob). 0 disables.
         public float LogoMinExtentToShow = 0f;
+        // Extra multiplier applied to clan crests after extent sizing.
+        public float ClanLogoScaleMult = 1f;
         public float TerritoryHaloSize = 0f;  // world units, 0 disables halos
         public float TerritoryHaloOpacity = 0.18f;
 

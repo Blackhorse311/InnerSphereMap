@@ -504,6 +504,9 @@ namespace InnerSphereMap {
                             add = Mathf.Clamp(extent * settings.LogoExtentFactor, settings.LogoMinScaleAdd, settings.LogoMaxScaleAdd);
                         }
                     }
+                    if (faction.IsClan) {
+                        add *= settings.ClanLogoScaleMult;
+                    }
                     if (logo.transform.localScale == Fields.originalTransform.localScale
                         || settings.LogoExtentFactor > 0f) {
                         logo.transform.localScale = Fields.originalTransform.localScale + new Vector3(add, add, add);
