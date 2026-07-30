@@ -1,24 +1,141 @@
 {
-	"KuritaRGB" : [0.863, 0.078, 0.235],
-	"SteinerRGB" : [0.255, 0.412, 0.882],
-	"OutworldsRGB" : [0.627, 0.322, 0.176],
-	"OberonRGB" : [1, 1, 0],
-	"LothianRGB" : [0.196, 0.804, 0.196],
-	"MarianRGB" : [1, 0.549, 0],
-	"CircinusRGB" : [0.545, 0, 0],
-	"IllyrianRGB" : [0.741, 0.718, 0.420],
-	"DavionRGB" : [1.000, 0.864, 0.419],
-	"LiaoRGB" : [0.815, 1.000, 0.566],
-	"MarikRGB" : [0.782, 0.574, 1.000],
-	"TaurianRGB" : [0.346, 0.621, 1.000],
-	"MagistracyRGB" : [0.271, 1.000, 0.941],
-	"RestorationRGB" : [0.750, 0.160, 0.160],
-	"MinFov" : 15.0,
-	"MaxFov" : 100.0,
-	"MapWidth" : 200.0,
-	"MapHeight" : 200.0,
-	"MapTopViewBuffer" : 25.0,
-	"MapLeftViewBuffer" : 25.0,
-	"MapRightViewBuffer" : 25.0,
-	"MapBottomViewBuffer" : 75.0
+	// ============================================================
+	// AIEmpires Star Map (InnerSphereMap fork) — settings
+	// Edit values, save, and restart the game. No cache clearing
+	// is needed for settings-only changes.
+	// ============================================================
+
+	// ---- Camera & zoom ------------------------------------------
+	// MinFov = how far you can zoom IN (smaller = closer).
+	// MaxFov = how far you can zoom OUT (bigger = wider view).
+	"MinFov": 15.0,
+	"MaxFov": 150.0,
+	// Map canvas half-size in world units, plus edge padding. If you
+	// grow the canvas, grow CameraDistance proportionally too.
+	"MapWidth": 400.0,
+	"MapHeight": 400.0,
+	"MapTopViewBuffer": 25.0,
+	"MapLeftViewBuffer": 25.0,
+	"MapRightViewBuffer": 25.0,
+	"MapBottomViewBuffer": 75.0,
+	// legacy flag from the BTA lineage, leave as-is
+	"use3040Map": true,
+
+	// ---- Political map (colored territories) --------------------
+	// drawBorders paints faction-colored territory regions.
+	// rescaleBorders stretches that painting to the whole canvas.
+	// borderFillWhite keeps the fill visible (false = broken/black).
+	// TravelWashIntensity: 0 disables the white "reachable space"
+	// overlay (with an open map it just greys everything); -1 = vanilla.
+	"drawBorders": true,
+	"rescaleBorders": true,
+	"borderFillWhite": true,
+	"TravelWashIntensity": 0.0,
+
+	// ---- Faction crests (the logo icons over each territory) ----
+	// logoTintByFaction colors the white crest art with each
+	// faction's map color. LogoOpacity = crest transparency.
+	"logoTintByFaction": true,
+	"LogoOpacity": 0.45,
+	// Crest size scales with how big the faction's territory is:
+	// extent * LogoExtentFactor, clamped between Min and Max.
+	// LogoExtentFactor 0 = fixed size for everyone.
+	"LogoExtentFactor": 0.022,
+	"LogoMinScaleAdd": 0.8,
+	"LogoMaxScaleAdd": 4.0,
+	// Hide crests for factions whose territory is smaller than this
+	// (0 = show everyone, even the Kerensky cluster micro-clans).
+	"LogoMinExtentToShow": 0.0,
+	// Extra size multiplier for Clan crests only (0.5 = half size).
+	"ClanLogoScaleMult": 0.5,
+	// If a Clan invasion is underway and this is true, only the
+	// leading invader Clan gets a crest instead of every Clan.
+	"reducedClanLogos": false,
+
+	// ---- Faction names (text under each crest) ------------------
+	// Size is in crest-local units; 0 hides the names entirely.
+	"FactionNameSize": 0.012,
+	"FactionNameOpacity": 0.28,
+	"FactionNameBrightness": 0.65,
+
+	// ---- System name labels (zoomed-in layer) -------------------
+	// JumpLabelDepth: label every system within this many jumps of
+	// your current position (0 = off).
+	"JumpLabelDepth": 2,
+	// ShowLabelDifficulty: skull row under each labeled system name.
+	"ShowLabelDifficulty": true,
+	// Size / transparency / dimness of system name labels.
+	"LabelCharacterSize": 0.038,
+	"LabelOpacity": 0.4,
+	"LabelBrightness": 0.75,
+	// Alternative label mode: name systems near the CAMERA center as
+	// you pan (world units, 0 = off). Works alongside JumpLabelDepth.
+	"ViewLabelRadius": 0.0,
+
+	// ---- Famous worlds (always labeled, in gold) ----------------
+	// Names must match the in-game system name exactly.
+	"alwaysLabeledSystems": [
+		"Terra", "Tukayyid", "Solaris", "Outreach", "Northwind",
+		"Hesperus II", "Kentares IV", "Misery", "Wolcott", "Turtle Bay",
+		"Twycross", "Coventry", "Tikonov", "Sarna", "Kathil",
+		"New Syrtis", "Robinson", "Dieron", "Proserpina", "Skye",
+		"Alshain", "Huntress", "Strana Mechty", "Galatea", "Tharkad",
+		"Luthien", "New Avalon", "Sian", "Atreus (FWL)", "Rasalhague",
+		"Taurus", "Canopus IV", "Alpheratz", "Oberon VI", "Circinus",
+		"St. Ives", "Alphard (MH)", "Galedon V", "Benjamin"
+	],
+
+	// ---- New-career splash screen -------------------------------
+	"splashTitle": "AI<color=#daa520>Empires</color>",
+	"splashText": "<b>The Inner Sphere is thinking.</b> \n\n Welcome, Commander!\n\n The full Inner Sphere and Periphery lay before you — over 3,000 star systems, with every Great House and Periphery power played by its own AI leader making real strategic decisions. \n\n This map is alive. Wars will start without you. Borders will move whether you fight or not. \n\n <b><color=#daa520>Find your place in it, and make your mark on the Inner Sphere!</color></b>",
+	"cheatcodes": [],
+
+	// ---- Crest art mapping (faction -> Logos/<name>.png) --------
+	"logos": [
+		{ "factionName": "Davion", "logoImage": "davionLogo" },
+		{ "factionName": "Kurita", "logoImage": "draconisLogo" },
+		{ "factionName": "Steiner", "logoImage": "steinerLogo" },
+		{ "factionName": "Liao", "logoImage": "liaoLogo" },
+		{ "factionName": "Marik", "logoImage": "marikLogo" },
+		{ "factionName": "Rasalhague", "logoImage": "rasalhagueLogo" },
+		{ "factionName": "AuriganRestoration", "logoImage": "restorationLogo" },
+		{ "factionName": "AuriganDirectorate", "logoImage": "directorateLogo" },
+		{ "factionName": "TaurianConcordat", "logoImage": "taurianLogo" },
+		{ "factionName": "MagistracyOfCanopus", "logoImage": "magistracyLogo" },
+		{ "factionName": "WordOfBlake", "logoImage": "WordOfBlakeLogo" },
+		{ "factionName": "OutworldsAlliance", "logoImage": "outworldsLogo" },
+		{ "factionName": "CircinusFederation", "logoImage": "circinusLogo" },
+		{ "factionName": "MarianHegemony", "logoImage": "marianLogo" },
+		{ "factionName": "IllyrianPalatinate", "logoImage": "illyrianLogo" },
+		{ "factionName": "LothianLeague", "logoImage": "lothianLogo" },
+		{ "factionName": "StIvesCompact", "logoImage": "stivesLogo" },
+		{ "factionName": "OberonConfederation", "logoImage": "oberonLogo" },
+		{ "factionName": "GreaterValkyrate", "logoImage": "ValkyrateLogo" },
+		{ "factionName": "ElysianFields", "logoImage": "ElysiaLogo" },
+		{ "factionName": "CalderonProtectorate", "logoImage": "CalderonProtectorateLogo" },
+		{ "factionName": "FroncReaches", "logoImage": "FroncReachesLogo" },
+		{ "factionName": "ChainelaneIsles", "logoImage": "ChainelaneLogo" },
+		{ "factionName": "NewDelphiCompact", "logoImage": "DelphiLogo" },
+		{ "factionName": "HanseaticLeague", "logoImage": "HanseLogo" },
+		{ "factionName": "TortugaDominions", "logoImage": "TortugaLogo" },
+		{ "factionName": "NuevaCastile", "logoImage": "CastileLogo" },
+		{ "factionName": "RimCollection", "logoImage": "RimCollectionLogo" },
+		{ "factionName": "JarnFolk", "logoImage": "JarnFolkLogo" },
+		{ "factionName": "ClanWolf", "logoImage": "ClanWolfLogo" },
+		{ "factionName": "ClanGhostBear", "logoImage": "ClanGhostBearLogo" },
+		{ "factionName": "ClanJadeFalcon", "logoImage": "ClanJadeFalconLogo" },
+		{ "factionName": "ClanSmokeJaguar", "logoImage": "ClanSmokeJaguarLogo" },
+		{ "factionName": "ClanNovaCat", "logoImage": "ClanNovaCatLogo" },
+		{ "factionName": "ClanSnowRaven", "logoImage": "ClanSnowRavenLogo" },
+		{ "factionName": "ClanGoliathScorpion", "logoImage": "ClanGoliathScorpionLogo" },
+		{ "factionName": "ClanDiamondShark", "logoImage": "ClanDiamondSharkLogo" },
+		{ "factionName": "ClanHellsHorses", "logoImage": "ClanHellsHorsesLogo" },
+		{ "factionName": "ClanIceHellion", "logoImage": "ClanIceHellionLogo" },
+		{ "factionName": "ClanSteelViper", "logoImage": "ClanSteelViperLogo" },
+		{ "factionName": "ClanStarAdder", "logoImage": "ClanStarAdderLogo" },
+		{ "factionName": "ClanCloudCobra", "logoImage": "ClanCloudCobraLogo" },
+		{ "factionName": "ClanCoyote", "logoImage": "ClanCoyoteLogo" },
+		{ "factionName": "ClanBurrock", "logoImage": "ClanBurrockLogo" },
+		{ "factionName": "ClanFireMandrill", "logoImage": "ClanFireMandrillLogo" }
+	]
 }
