@@ -35,6 +35,8 @@ namespace InnerSphereMap {
         public int JumpLabelDepth = 0;
         public float LabelOpacity = 0.85f;
         public float LabelBrightness = 1f;
+        // Vertical offset of the label below the star (more negative = lower).
+        public float LabelOffsetY = -1.4f;
 
         // AIEmpires fork: camera distance from the map plane. Vanilla parks the
         // camera at z=-100; larger MapWidth/Height needs a proportionally

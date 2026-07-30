@@ -2,6 +2,7 @@ using BattleTech;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 namespace InnerSphereMap {
@@ -97,15 +98,11 @@ namespace InnerSphereMap {
                 // happily render them mid-hangar.
                 labelObject.layer = renderer.gameObject.layer;
                 labelObject.transform.SetParent(renderer.transform, false);
-                labelObject.transform.localPosition = new Vector3(0f, -1.4f, -0.2f);
                 textMesh = labelObject.AddComponent<TextMesh>();
                 textMesh.font = LabelFont;
                 labelObject.GetComponent<MeshRenderer>().material = LabelFont.material;
                 textMesh.anchor = TextAnchor.UpperCenter;
                 textMesh.alignment = TextAlignment.Center;
-                textMesh.characterSize = settings.LabelCharacterSize;
-                // Dense rasterization keeps glyphs crisp under deep zoom.
-                textMesh.fontSize = 140;
             }
             else {
                 labelObject = existing.gameObject;
@@ -122,8 +119,13 @@ namespace InnerSphereMap {
                 float inverse = 1f / parentScale;
                 labelObject.transform.localScale = new Vector3(inverse, inverse, inverse);
             }
+            labelObject.transform.localPosition = new Vector3(0f, settings.LabelOffsetY, -0.2f);
+            // Rasterize near on-screen size: oversized glyph textures alias
+            // badly when downsampled to small labels.
+            textMesh.fontSize = 64;
+            textMesh.characterSize = settings.LabelCharacterSize;
 
-            string text = system.Name;
+            string text = ResolveRenamed(system.Name, sim.CurrentDate.Year);
             if (settings.ShowLabelDifficulty) {
                 int difficulty = system.Def.GetDifficulty(sim.SimGameMode);
                 text += "\n" + DifficultyRow(difficulty);
@@ -133,6 +135,21 @@ namespace InnerSphereMap {
             Color baseColor = isCapital ? CapitalColor : NearbyColor;
             textMesh.color = new Color(baseColor.r * b, baseColor.g * b, baseColor.b * b, settings.LabelOpacity);
             labelObject.SetActive(true);
+        }
+
+        // Careers serialize system defs at creation, so saves made before the
+        // era-aware rename fix still carry raw mm-data ids like
+        // "Untran (Achtur 2822+)". Resolve at display time against the current
+        // in-game year — which also flips names live when a career crosses
+        // the rename date.
+        private static readonly Regex RenameRe = new Regex(@"^(.+?) \((.+?) (\d{3,4})\+\)$", RegexOptions.Compiled);
+
+        private static string ResolveRenamed(string name, int year) {
+            Match m = RenameRe.Match(name);
+            if (!m.Success) {
+                return name;
+            }
+            return year >= int.Parse(m.Groups[3].Value) ? m.Groups[2].Value : m.Groups[1].Value;
         }
 
         private static bool? _skullGlyphAvailable;
